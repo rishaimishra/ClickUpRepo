@@ -1,0 +1,8 @@
+[08-May-2023 07:35:33 America/Boise] PHP Warning:  include_once(include/header.php): failed to open stream: No such file or directory in /home2/lailfamy/public_html/customer-reviews.php on line 1
+[08-May-2023 07:35:33 America/Boise] PHP Warning:  include_once(): Failed opening 'include/header.php' for inclusion (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home2/lailfamy/public_html/customer-reviews.php on line 1
+[08-May-2023 07:35:33 America/Boise] PHP Warning:  include_once(include/footer.php): failed to open stream: No such file or directory in /home2/lailfamy/public_html/customer-reviews.php on line 294
+[08-May-2023 07:35:33 America/Boise] PHP Warning:  include_once(): Failed opening 'include/footer.php' for inclusion (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home2/lailfamy/public_html/customer-reviews.php on line 294
+[11-May-2023 08:20:51 America/Boise] PHP Warning:  include_once(include/header.php): failed to open stream: No such file or directory in /home2/lailfamy/public_html/cancellation-policy.php on line 1
+[11-May-2023 08:20:51 America/Boise] PHP Warning:  include_once(): Failed opening 'include/header.php' for inclusion (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home2/lailfamy/public_html/cancellation-policy.php on line 1
+[11-May-2023 08:20:51 America/Boise] PHP Warning:  include_once(include/footer.php): failed to open stream: No such file or directory in /home2/lailfamy/public_html/cancellation-policy.php on line 30
+[11-May-2023 08:20:51 America/Boise] PHP Warning:  include_once(): Failed opening 'include/footer.php' for inclusion (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home2/lailfamy/public_html/cancellation-policy.php on line 30
