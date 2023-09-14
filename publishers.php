@@ -1,4 +1,6 @@
-<?php include_once ("header.php") ?>
+<?php 
+session_start();
+include_once ("header.php") ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         
 <style>
@@ -106,6 +108,96 @@ h4
 }
 </style>	
 
+
+<script>
+	function validatePubForm() {
+	let x = document.forms["myPubForm"]["name"].value;
+	let y = document.forms["myPubForm"]["email"].value;
+	let pass = document.forms["myPubForm"]["pass"].value;
+	let z = document.forms["myPubForm"]["number"].value;
+	let business_name = document.forms["myPubForm"]["business_name"].value;
+	let business_address = document.forms["myPubForm"]["business_address"].value;
+	let demo = document.forms["myPubForm"]["demoQ"].value;
+	let zip = document.forms["myPubForm"]["zip"].value;
+
+	if (x == "") {
+		alert("Name must be filled out");
+		return false;
+	}
+	if (y == "") {
+		alert("Email must be filled out");
+		return false;
+	}else{
+		var emailFormat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (!emailFormat.test(y)) {
+			alert('Please provide a valid email address');
+			return false;
+		}
+	}
+    if (pass == "") {
+		alert("Password must be filled out");
+		return false;
+	}
+    if (z == "") {
+		alert("Phone must be filled out");
+		return false;
+	}else{
+		// var phoneno = /^\d{10}$/;
+		var phoneno = /^(\d{3})[- ]?(\d{3})[- ]?(\d{4})$/;
+		if(z.match(phoneno))
+		{
+			console.log(1111);
+			// return true;
+		}
+		else
+		{
+			console.log(2222);
+			alert("Not a valid Phone Number");
+			return false;
+		}
+	}
+
+    
+    if (demo == 0) {
+		alert("Choose traffic you want to monetize");
+		return false;
+	}
+
+    if (business_name == "") {
+		alert("Business name must be filled out");
+		return false;
+	}
+    if (business_address == "") {
+		alert("Business address must be filled out");
+		return false;
+	}
+
+	
+	
+    if (zip == "") {
+		alert("Zip Code must be filled out");
+		return false;
+	}else{
+		var phoneno = /^\d{5}$/;
+		// var phoneno = /^(\d{3})[- ]?(\d{3})[- ]?(\d{4})$/;
+		if(zip.match(phoneno))
+		{
+			console.log(1111);
+			return true;
+		}
+		else
+		{
+			console.log(2222);
+			alert("Not a valid Zip Code");
+			return false;
+		}
+	}
+
+
+}
+
+</script>
+
 <section class="module_2 parallax " data-background="assets/images/about-bg-2.jpg">
 	<div class="container">
 		<div class="row">
@@ -148,7 +240,19 @@ h4
 				</div>
 			</div>
 			<div class="col-md-6">
-				<form class="contact_form_cls" action="#" method="POST" novalidate="">
+            <?php 
+									if (isset($_SESSION['successPub'])) { ?>
+									<div class="alert alert-warning alert-dismissible fade show" role="alert">
+									<strong>Hey!</strong> <?php echo $_SESSION['successPub']; ?>
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									</div>
+									<?php 	
+											unset($_SESSION['successPub']);
+										}
+									?>
+				<form class="contact_form_cls" name="myPubForm" action="mail.php" method="POST" onsubmit="return validatePubForm()" novalidate="">
 				    <h3 style="color: #b99334;">Register</h3>
                     <div class="row">
                     <div class="col-md-12">
@@ -168,7 +272,7 @@ h4
                     <div class="col-md-12">
                     <div class="form-group">
                     <label for="">Password<span>*</span></label>
-                    <input class="form-control" type="password" name="number" placeholder="Password" required="">
+                    <input class="form-control" type="password" name="pass" placeholder="Password" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
@@ -182,46 +286,46 @@ h4
                     <div class="col-md-12">
                     <div class="form-group">
                     <label for="">Phone Number<span>*</span></label>
-                    <input class="form-control" type="text" name="phone_number" placeholder="(987) 654-3210" required="">
+                    <input class="form-control" type="text" name="number" placeholder="(987) 654-3210" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
                     <div class="col-md-12">
                     <div class="form-group">
                     <label for="">What traffic do you want to monetize?<span>*</span></label>
-                    <select class="form-control" id="demo" name="demo">
-                     <option value="" disabled="" selected="" hidden="">What traffic do you want to monetize? (pick one)</option>
-                    <option value="">I have a website I would like to Monetize</option>
-                    <option value="">I represent an Ad Network/ I am a Media Buyer/ Affiliate</option>
-                    <option value="">I want to Monetize traffic from Facebook, Youtube or other social media</option>
+                    <select class="form-control" id="demo" name="demoQ">
+                     <option value="0" disabled="" selected="" hidden="">What traffic do you want to monetize? (pick one)</option>
+                    <option value="I have a website I would like to Monetize">I have a website I would like to Monetize</option>
+                    <option value="I represent an Ad Network/ I am a Media Buyer">I represent an Ad Network/ I am a Media Buyer/ Affiliate</option>
+                    <option value="I want to Monetize traffic from Facebook">I want to Monetize traffic from Facebook, Youtube or other social media</option>
                     </select>
                     </div>
                     </div>
                     <div class="col-md-12">
                     <div class="form-group">
                     <label for="">Business Name</label>
-                    <input class="form-control" type="text" name="" placeholder="Business Name" required="">
+                    <input class="form-control" type="text" name="business_name" placeholder="Business Name" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
                     <div class="col-md-12">
                     <div class="form-group">
                     <label for="">Business Address</label>
-                    <input class="form-control" type="text" name="" placeholder="Business Address" required="">
+                    <input class="form-control" type="text" name="business_address" placeholder="Business Address" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
                     <div class="col-md-4">
                     <div class="form-group">
                     <label for="">City</label>
-                    <input class="form-control" type="text" name="" placeholder="City" required="">
+                    <input class="form-control" type="text" name="city" placeholder="City" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
                     <div class="col-md-4">
                     <div class="form-group">
                     <label for="">State</label>
-                    <select class="form-control" id="demo" name="demo">
+                    <select class="form-control" id="demo" name="state">
                      <option value="" selected="" disabled="" hidden="">Select State..</option>
                     <option value="Alabama">Alabama</option>
                     <option value="Alaska">Alaska</option>
@@ -238,7 +342,7 @@ h4
                     <div class="col-md-4">
                     <div class="form-group">
                     <label for="">Zipcode</label>
-                    <input class="form-control" type="text" name="" placeholder="Zipcode" required="">
+                    <input class="form-control" type="text" name="zip" placeholder="Zipcode" required="">
                     <p class="help-block text-danger"></p>
                     </div>
                     </div>
@@ -251,7 +355,7 @@ h4
                     </div>
                     <div class="col-md-12">
                     <div class="text-center">
-                    <input class="btn btn-round btn-brand" type="submit" value="Sign up">
+                    <input class="btn btn-round btn-brand" type="submit" name="PubSubmit" value="Sign up">
                     </div>
                     </div>
                     <div class="col-md-12">

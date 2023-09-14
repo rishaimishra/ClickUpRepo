@@ -1,4 +1,33 @@
-<?php include_once ("login-header.php") ?>
+<?php include_once ("login-header.php");
+
+include './components/connect.php';
+
+session_start();
+
+if(isset($_POST['btnlogin'])){
+
+   $name = $_POST['name'];
+   $name = filter_var($name, FILTER_SANITIZE_STRING);
+   $pass = sha1($_POST['pass']);
+   $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+   
+      $role = "adv";
+  
+   $select_admin = $conn->prepare("SELECT * FROM `admin` WHERE name = ? AND password = ? AND role = ?");
+   $select_admin->execute([$name, $pass, $role]);
+    
+   if($select_admin->rowCount() > 0){
+      $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
+      $_SESSION['adv_id'] = $fetch_admin_id['id'];
+    //   print_r($_SESSION['admin_id']);
+
+      header('location:advertiserlist.php');
+   }else{
+      $message[] = 'incorrect username or password!';
+   }
+
+}
+?>
     <style>
     .auth-one-bg-position {
     position: absolute;
@@ -165,33 +194,37 @@ body {
                                 <h3 class="text-dark mt-3">Advertisers Login</h3>
                             </div>
 
-                            <div class="p-2 mt-3">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Username</label>
-                                    <input name="txtusername" type="text" id="txtusername" class="form-control" placeholder="Enter username" />
-                                </div>
+                            <form action="" method="POST">
+                                <div class="p-2 mt-3">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Username</label>
+                                        <input name="name" type="text" id="txtusername" class="form-control" placeholder="Enter username" />
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label" for="password-input">Password</label>
-                                    <div class="position-relative auth-pass-inputgroup mb-3">
-                                        <input name="txtpassword" type="password" id="txtpassword" class="form-control pe-5 password-input" placeholder="Enter password" />
-                                        <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="password-input">Password</label>
+                                        <div class="position-relative auth-pass-inputgroup mb-3">
+                                            <input name="pass" type="password" id="txtpassword" class="form-control pe-5 password-input" placeholder="Enter password" />
+                                            <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="auth-remember-check" />
+                                        <label class="form-check-label" for="auth-remember-check">Remember me</label>
+                                        <a href="#" class="text-muted float-end" style="    color: #a57e09 !important;">Forgot password?</a>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <input type="submit" name="btnlogin" value="Login" id="btnlogin" class="btn btn-primary w-100" />
+                                    </div>
+                                    <div class="mt-4">
+                                        <p>Don't have an account? <strong><a href="advertisers.php" class="text-muted float-end" style="    color: #a57e09 !important;">Signup Now</a></strong></p>
                                     </div>
                                 </div>
+                            </form>
 
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="auth-remember-check" />
-                                    <label class="form-check-label" for="auth-remember-check">Remember me</label>
-                                    <a href="#" class="text-muted float-end" style="    color: #a57e09 !important;">Forgot password?</a>
-                                </div>
 
-                                <div class="mt-4">
-                                    <input type="submit" name="btnlogin" value="Login" id="btnlogin" class="btn btn-primary w-100" />
-                                </div>
-                                <div class="mt-4">
-                                    <p>Don't have an account? <strong><a href="advertisers.php" class="text-muted float-end" style="    color: #a57e09 !important;">Signup Now</a></strong></p>
-                                </div>
-                            </div>
                         </div>
                         <!-- card body -->
                     </div>

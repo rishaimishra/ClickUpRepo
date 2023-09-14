@@ -1,4 +1,35 @@
-<?php include_once ("login-header.php") ?>
+<?php include_once ("login-header.php");
+
+include './components/connect.php';
+
+session_start();
+
+if(isset($_POST['btnlogin'])){
+
+   $name = $_POST['name'];
+   $name = filter_var($name, FILTER_SANITIZE_STRING);
+   $pass = sha1($_POST['pass']);
+   $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+   
+      $role = "pub";
+  
+   $select_admin = $conn->prepare("SELECT * FROM `admin` WHERE name = ? AND password = ? AND role = ?");
+   $select_admin->execute([$name, $pass, $role]);
+   
+   if($select_admin->rowCount() > 0){
+      $fetch_admin_id = $select_admin->fetch(PDO::FETCH_ASSOC);
+      $_SESSION['pub_id'] = $fetch_admin_id['id'];
+    //   print_r($_SESSION['admin_id']);
+
+      header('location:publisherlist.php');
+   }else{
+      $message[] = 'incorrect username or password!';
+   }
+
+}
+
+
+?>
     <style>
     .auth-one-bg-position {
     position: absolute;
@@ -165,17 +196,17 @@ body {
                                 </div>
                                 <h3 class="text-dark mt-3">Publishers Login</h3>
                             </div>
-
+                        <form action="" method="POST">
                             <div class="p-2 mt-3">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Username</label>
-                                    <input name="txtusername" type="text" id="txtusername" class="form-control" placeholder="Enter username" />
+                                    <input name="name" type="text" id="txtusername" class="form-control" placeholder="Enter username" />
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label" for="password-input">Password</label>
                                     <div class="position-relative auth-pass-inputgroup mb-3">
-                                        <input name="txtpassword" type="password" id="txtpassword" class="form-control pe-5 password-input" placeholder="Enter password" />
+                                        <input name="pass" type="password" id="txtpassword" class="form-control pe-5 password-input" placeholder="Enter password" />
                                         <button class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon" type="button" id="password-addon"><i class="ri-eye-fill align-middle"></i></button>
                                     </div>
                                 </div>
@@ -193,6 +224,7 @@ body {
                                     <p>Don't have an account? <strong><a href="publishers.php" class="text-muted float-end" style="    color: #a57e09 !important;">Signup Now</a></strong></p>
                                 </div>
                             </div>
+                        </form>
                         </div>
                         <!-- card body -->
                     </div>

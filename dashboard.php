@@ -1,4 +1,21 @@
-<?php include_once ("header.php") ?>
+<?php
+ob_start();
+session_start();
+include_once ("header.php");
+
+include './components/connect.php';
+
+
+$admin_id = $_SESSION['admin_id'];
+// echo($admin_id);
+if(!isset($admin_id)){
+   header('location:admin-login.php');
+
+}
+
+ob_end_flush();
+
+?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
    .nav-pills-custom .nav-link {
@@ -204,15 +221,31 @@ only screen and (max-width: 760px),
                         <i class="fas fa-tachometer-alt"></i>
                         <span class="font-weight-bold small ">Dashboard</span></a>
 
-                    <a class="nav-link mb-3 p-3 shadow" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                    <?php
+                    
+                    $select_users_role = $conn->prepare("SELECT * FROM `admin` where id <=> :id");
+                    $select_users_role->execute(['id' => $admin_id]);
+                    $user_role = $select_users_role->fetch(PDO::FETCH_ASSOC);
+                    // print_r($user_role['role']);
+
+                    if ($user_role['role'] == "pub" || $user_role['role'] == "admin") {
+                    ?>
+                    
+                        <a class="nav-link mb-3 p-3 shadow" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">
                         <i class="fas fa-users"></i>
                         <span class="font-weight-bold small ">Publisher List</span></a>
 
-                    <a class="nav-link mb-3 p-3 shadow" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                    <?php }  if ($user_role['role'] == "adv" || $user_role['role'] == "admin") {  ?>
+
+
+                    
+                        <a class="nav-link mb-3 p-3 shadow" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">
                         <i class="fas fa-users"></i>
                         <span class="font-weight-bold small ">Advertiser List</span></a>
+                    <?php } ?>
 
-                    <a class="nav-link mb-3 p-3 shadow" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+
+                    <a class="nav-link mb-3 p-3 shadow" href="admin_logout.php">
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="font-weight-bold small ">Logout</span></a>
                     </div>
@@ -224,18 +257,31 @@ only screen and (max-width: 760px),
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade  rounded bg-white show active p-5" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                         <div class="card-container module_2">
+                        <?php
+                                    $select_users = $conn->prepare("SELECT * FROM `publishers_advertiser` where role <=> :role");
+                                    $select_users->execute(['role' => 'pub']);
+                                    $numbers_of_users = $select_users->rowCount();
+                                    $select_users->execute(['role' => 'adv']);
+                                    $numbers_of_adv = $select_users->rowCount();
+
+                                    if ($user_role['role'] == "pub" || $user_role['role'] == "admin") {
+                                ?>
                             <div class="card">
                                 <div class="card-content">
+                                
                                     <i class="fas fa-user-check"></i>
-                                    <h2 class="card-title">Total Register of Publishers <span>(10)</span></h2>
-                                 </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-content">
-                                    <i class="fas fa-user-check"></i>
-                                    <h2 class="card-title">Total Register of Advertisers <span>(10)</span></h2>
+                                    <h2 class="card-title">Total Register of Publishers <span>(<?php echo $numbers_of_users; ?>)</span></h2>
                                 </div>
                             </div>
+                        <?php } if ($user_role['role'] == "adv" || $user_role['role'] == "admin") {?>
+
+                            <div class="card">
+                                <div class="card-content">
+                                    <i class="fas fa-user-check"></i>
+                                    <h2 class="card-title">Total Register of Advertisers <span>(<?php echo $numbers_of_adv; ?>)</span></h2>
+                                </div>
+                            </div>
+                        <?php } ?>
                             
                         </div>
                         		
@@ -260,15 +306,37 @@ only screen and (max-width: 760px),
                         </tr>
                         </thead>
                         <tbody>
+                            <?php
+                             $select_account = $conn->prepare("SELECT * FROM `publishers_advertiser` where role <=> :role");
+                             $select_account->execute(['role' => "pub"]);
+
+                             if($select_account->rowCount() > 0){
+                                while($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)){ 
+                                   $user_id = $fetch_accounts['id']; 
+                                   $user_name = $fetch_accounts['name']; 
+                                   $user_email = $fetch_accounts['email']; 
+                                   $user_number = $fetch_accounts['number']; 
+                                   $user_monetize = $fetch_accounts['what_monetize']; 
+                                   $user_bussname = $fetch_accounts['business_name']; 
+                                   $user_bussaddress = $fetch_accounts['business_address']; 
+                                   $user_city = $fetch_accounts['city']; 
+                                   $user_state = $fetch_accounts['state']; 
+                                   $user_zip = $fetch_accounts['zip_code']; 
+                                   
+                                ?>
                         <tr>
-                          <td data-column="Full Name">Test Test</td>
-                          <td data-column="Email Address">Test@gmail.com</td>
-                          <td data-column="Phone Number">9876543210</td>
-                          <td data-column="How Did You Hear About Us">Test TestTest Test</td>
-                          <td data-column="Business Name">Test Test</td>
+                          <td data-column="Full Name"><?php echo $user_name ?></td>
+                          <td data-column="Email Address"><?php echo $user_email  ?></td>
+                          <td data-column="Phone Number"><?php echo $user_number ?></td>
+                          <td data-column="How Did You Hear About Us"><?php echo $user_monetize ?></td>
+                          <td data-column="Business Name"><?php echo $user_bussname ?></td>
                           <td data-column="IP Address">9.8.7.6.4.1</td>
-                          <td data-column="Zipcode">654213</td>
+                          <td data-column="Zipcode"><?php echo $user_zip ?></td>
                         </tr>
+                            <?php } 
+                            }else{
+                                echo '<p class="empty">no accounts available</p>';
+                            }  ?>
                         
                         </tbody>
                         </table>
@@ -294,15 +362,37 @@ only screen and (max-width: 760px),
                         </tr>
                         </thead>
                         <tbody>
+                            <?php
+                             $select_account = $conn->prepare("SELECT * FROM `publishers_advertiser` where role <=> :role");
+                             $select_account->execute(['role' => "adv"]);
+
+                             if($select_account->rowCount() > 0){
+                                while($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)){ 
+                                   $user_id = $fetch_accounts['id']; 
+                                   $user_name = $fetch_accounts['name']; 
+                                   $user_email = $fetch_accounts['email']; 
+                                   $user_number = $fetch_accounts['number']; 
+                                   $user_monetize = $fetch_accounts['what_monetize']; 
+                                   $user_bussname = $fetch_accounts['business_name']; 
+                                   $user_bussaddress = $fetch_accounts['business_address']; 
+                                   $user_city = $fetch_accounts['city']; 
+                                   $user_state = $fetch_accounts['state']; 
+                                   $user_zip = $fetch_accounts['zip_code']; 
+                                   
+                                ?>
                         <tr>
-                          <td data-column="Full Name">Test Test</td>
-                          <td data-column="Email Address">Test@gmail.com</td>
-                          <td data-column="Phone Number">9876543210</td>
-                          <td data-column="How Did You Hear About Us">Test TestTest Test</td>
-                          <td data-column="Business Name">Test Test</td>
+                          <td data-column="Full Name"><?php echo $user_name ?></td>
+                          <td data-column="Email Address"><?php echo $user_email  ?></td>
+                          <td data-column="Phone Number"><?php echo $user_number ?></td>
+                          <td data-column="How Did You Hear About Us"><?php echo $user_monetize ?></td>
+                          <td data-column="Business Name"><?php echo $user_bussname ?></td>
                           <td data-column="IP Address">9.8.7.6.4.1</td>
-                          <td data-column="Zipcode">654213</td>
+                          <td data-column="Zipcode"><?php echo $user_zip ?></td>
                         </tr>
+                            <?php } 
+                            }else{
+                                echo '<p class="empty">no accounts available</p>';
+                            }  ?>
                         
                         </tbody>
                         </table>

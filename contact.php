@@ -1,4 +1,6 @@
-<?php include_once ("header.php") ?>
+<?php
+session_start();
+include_once ("header.php") ?>
 <style>
 	#text3d {
     color: #fff;
@@ -60,6 +62,49 @@ a:hover {
     color: #b89131;
 }
 </style>
+
+<script>
+	function validateForm() {
+	let x = document.forms["myForm"]["name"].value;
+	let y = document.forms["myForm"]["email"].value;
+	let z = document.forms["myForm"]["number"].value;
+	if (x == "") {
+		alert("Name must be filled out");
+		return false;
+	}
+	if (y == "") {
+		alert("Email must be filled out");
+		return false;
+	}else{
+		var emailFormat = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (!emailFormat.test(y)) {
+			alert('Please provide a valid email address');
+			return false;
+		}
+	}
+	if (z == "") {
+		alert("Phone must be filled out");
+		return false;
+	}else{
+		// var phoneno = /^\d{10}$/;
+		var phoneno = /^(\d{3})[- ]?(\d{3})[- ]?(\d{4})$/;
+		if(z.match(phoneno))
+		{
+			console.log(1111);
+			return true;
+		}
+		else
+		{
+			console.log(2222);
+			alert("Not a valid Phone Number");
+			return false;
+		}
+	}
+
+
+}
+
+</script>
 			<!-- Wrapper-->
 			<div class="wrapper">
 
@@ -77,7 +122,7 @@ a:hover {
 				<!-- Page Header end-->
 
 				<!-- Contact-->
-				
+   			 	<?php $successMessage =""; ?>
 				<!-- Contact end-->
 				<section class="" style="    padding: 60px 0px;">
 					<div class="container">
@@ -86,12 +131,24 @@ a:hover {
 								<div class="module-title text-left">
 									<h2>Let´s Talk</h2>
 									<p class="font-serif">Feel free to contact us using the following form and one of our account managers will contact you soon.</p>
+									<?php 
+									if (isset($_SESSION['success'])) { ?>
+									<div class="alert alert-warning alert-dismissible fade show" style="margin-right:34%" role="alert">
+									<strong>Hey!</strong> <?php echo $_SESSION['success']; ?>
+									<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									</div>
+									<?php 	
+											unset($_SESSION['success']);
+										}
+									?>
 								</div>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-8 m-auto">
-								<form class="contact_form_cls" action="mail.php" method="POST"  novalidate>
+								<form action="mail.php" name="myForm" method="POST" class="contact_form_cls" onsubmit="return validateForm()"  novalidate>
 									<div class="row">
 											
 										<div class="col-md-6">
@@ -122,9 +179,9 @@ a:hover {
 												<label for="">Inquiry Type<span>*</span></label>
 												  <select class="form-control" id="demo" name="demo">
 												  	<option disabled="" value="">Please Select</option>
-		                                            <option value="">General Inquiries</option>
-		                                            <option value="">Publisher Inquiries</option>
-		                                            <option value="">Advertiser Inquiries</option>
+		                                            <option value="gi">General Inquiries</option>
+		                                            <option value="pi">Publisher Inquiries</option>
+		                                            <option value="ai">Advertiser Inquiries</option>
 		                                          </select>
 											</div>
 										</div>
@@ -137,7 +194,7 @@ a:hover {
 										</div>
 										<div class="col-md-12">
 											<div class="text-center">
-												<input class="btn btn-round btn-brand" type="submit" value="Send Request">
+												<input class="btn btn-round btn-brand" type="submit" name="submit" value="Send Request">
 											</div>
 										</div>
 									</div>

@@ -1,4 +1,21 @@
-<?php include_once ("header.php") ?>
+<?php 
+ob_start();
+session_start();
+
+include_once ("header.php");
+
+include './components/connect.php';
+
+
+$admin_id = $_SESSION['pub_id'];
+echo($admin_id);
+if(!isset($admin_id)){
+   header('location:publishers-login.php');
+
+}
+
+ob_end_flush();
+?>
 
         
 <style>
@@ -206,14 +223,33 @@ only screen and (max-width: 760px),
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td data-column="cls">Full Name</td>
-      <td data-column="cls">Email Address</td>
-      <td data-column="cls">Phone Number</td>
-      <td data-column="cls">What traffic do you want to monetize</td>
-    </tr>
-    
-  </tbody>
+                            <?php
+                             $select_account = $conn->prepare("SELECT * FROM `publishers_advertiser` where role <=> :role");
+                             $select_account->execute(['role' => "pub"]);
+
+                             if($select_account->rowCount() > 0){
+                                while($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)){ 
+                                   $user_id = $fetch_accounts['id']; 
+                                   $user_name = $fetch_accounts['name']; 
+                                   $user_email = $fetch_accounts['email']; 
+                                   $user_number = $fetch_accounts['number']; 
+                                   $user_monetize = $fetch_accounts['what_monetize']; 
+                                 
+                                   
+                                ?>
+                        <tr>
+                          <td data-column="Full Name"><?php echo $user_name ?></td>
+                          <td data-column="Email Address"><?php echo $user_email  ?></td>
+                          <td data-column="Phone Number"><?php echo $user_number ?></td>
+                          <td data-column="How Did You Hear About Us"><?php echo $user_monetize ?></td>
+                        
+                        </tr>
+                            <?php } 
+                            }else{
+                                echo '<p class="empty">no accounts available</p>';
+                            }  ?>
+                        
+                        </tbody>
 </table>
 				</div>
 			</div>
